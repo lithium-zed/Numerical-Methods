@@ -21,6 +21,9 @@ public class FunctionReader {
             // Handle Euler's number 'e'
             substitutedFunction = substitutedFunction.replaceAll("e", String.valueOf(Math.E));
 
+            // Handle square root
+            substitutedFunction = substitutedFunction.replaceAll("sqrt\\((.*?)\\)", "Math.sqrt($1)");
+
             // Handle transcendental functions (sin, cos, tan)
             substitutedFunction = substitutedFunction.replaceAll("sin\\((.*?)\\)", "Math.sin($1)");
             substitutedFunction = substitutedFunction.replaceAll("cos\\((.*?)\\)", "Math.cos($1)");
@@ -53,23 +56,7 @@ public class FunctionReader {
             return Double.NaN;
         }
     }
-//    private String evaluateMathPow(String expression){
-//        System.out.println("-- Enters evaluateMathPow");
-//        Pattern powerPatternEval = Pattern.compile("Math\\.pow\\(([-?\\d+(\\.\\d+)?]*),([-?\\d+(\\.\\d+)?]*)\\)");
-//        Matcher powerMatcherEval = powerPatternEval.matcher(expression);
-//        StringBuffer sbEval = new StringBuffer();
-//        while (powerMatcherEval.find()) {
-//            System.out.println("-- Enters while(powerMatcherEval.find())");
-//            double base = Double.parseDouble(powerMatcherEval.group(1).replaceAll("[()]", ""));
-//            double exponent = Double.parseDouble(powerMatcherEval.group(2).replaceAll("[()]", ""));
-//            powerMatcherEval.appendReplacement(sbEval, String.valueOf(Math.pow(base, exponent)));
-//        }
-//        System.out.println("Exits while(powerMatcherEval.find()) --");
-//        powerMatcherEval.appendTail(sbEval);
-//        expression = sbEval.toString();
-//        System.out.println("Exits evaluateMathPow --");
-//        return expression;
-//    }
+
     private double evaluateSimpleExpression(String expression) {
         System.out.println("-- Enters evaluateSimpleExpression (expression: "+expression+" )");
         expression = expression.replaceAll("\\s+", "");
@@ -89,8 +76,19 @@ public class FunctionReader {
         powerMatcherEval.appendTail(sbEval);
         expression = sbEval.toString();
 
-        // Evaluate sin, cos, tan
-        expression = evaluateTrigonometricFunctions(expression);
+//        // Evaluate Math.sqrt() //was moved below arithmetic operations
+//        Pattern sqrtPattern = Pattern.compile("Math\\.sqrt\\(([-?\\d+(\\.\\d+)?]*)\\)");
+//        Matcher sqrtMatcher = sqrtPattern.matcher(expression);
+//        StringBuffer sbSqrt = new StringBuffer();
+//        while (sqrtMatcher.find()) {
+//            double argument = Double.parseDouble(sqrtMatcher.group(1).replaceAll("[()]", ""));
+//            sqrtMatcher.appendReplacement(sbSqrt, String.valueOf(Math.sqrt(argument)));
+//        }
+//        sqrtMatcher.appendTail(sbSqrt);
+//        expression = sbSqrt.toString();
+
+//        // Evaluate sin, cos, tan
+//        expression = evaluateTrigonometricFunctions(expression); //was moved below arithmetic operations
 
         // Basic multiplication and division
         while (expression.contains("*") || expression.contains("/")) {
@@ -106,14 +104,17 @@ public class FunctionReader {
                 } else if (operator.equals("/")) {
                     result = operand1 / operand2;
                 }
-                expression = expression.replaceFirst(Pattern.quote(opMatcher.group(0)), String.valueOf(result));
+                expression = expression.replaceFirst(Pattern.quote(opMatcher.group(0)), "("+String.valueOf(result))+")";
             } else {
                 break;
             }
         }
 
         // Basic addition and subtraction
-        while (expression.contains("+") || (expression.startsWith("-") && expression.substring(1).contains("-")) || expression.substring(1).contains("-")) {
+        while (expression.contains("+")
+                || (expression.startsWith("-") && expression.substring(1).contains("-")) || expression.substring(1).contains("-")
+        ) {
+            System.out.println("-- Enters addition and subtraction");
             Pattern opPattern = Pattern.compile("(-?\\(?\\d+(\\.\\d+)?\\)?)([+-])(-?\\(?\\d+(\\.\\d+)?\\)?)");
             Matcher opMatcher = opPattern.matcher(expression);
             if (opMatcher.find()) {
@@ -127,11 +128,26 @@ public class FunctionReader {
                 } else if (operator.equals("-")) {
                     result = operand1 - operand2;
                 }
-                expression = expression.replaceFirst(Pattern.quote(opMatcher.group(0)), String.valueOf(result));
+                expression = expression.replaceFirst(Pattern.quote(opMatcher.group(0)), "("+String.valueOf(result))+")";
             } else {
                 break;
             }
         }
+        System.out.println("Exits addition and subtraction --");
+
+        // Evaluate Math.sqrt()
+        Pattern sqrtPattern = Pattern.compile("Math\\.sqrt\\(([-?\\d+(\\.\\d+)?]*)\\)");
+        Matcher sqrtMatcher = sqrtPattern.matcher(expression);
+        StringBuffer sbSqrt = new StringBuffer();
+        while (sqrtMatcher.find()) {
+            double argument = Double.parseDouble(sqrtMatcher.group(1).replaceAll("[()]", ""));
+            sqrtMatcher.appendReplacement(sbSqrt, String.valueOf(Math.sqrt(argument)));
+        }
+        sqrtMatcher.appendTail(sbSqrt);
+        expression = sbSqrt.toString();
+
+//        // Evaluate sin, cos, tan
+        expression = evaluateTrigonometricFunctions(expression);
 
         try {
             System.out.println("Exits evaluateSimpleExpression (try) --");
@@ -200,12 +216,16 @@ public class FunctionReader {
     //testing the function
     public static void main(String[] args) {
         System.out.println("-- Enters main");
-        FunctionReader reader1 = new FunctionReader("sqrt(x)", 4); //still has an error when solving extra complex equations AND SQUARE ROOT :/
+        FunctionReader reader1 = new FunctionReader("sqrt(x+2)", 2); //still has an error when solving extra complex equations and square roots with addition inside:/
         System.out.println(reader1);
         System.out.println("Result: " + reader1.functionResult());
         System.out.println("Exits main --");
     }
     //error equations
+    //e^sin(x^2)
     //e^sin(x^2+3)
-    //sqrt(x)
+    //e^sqrt(2+x)
+    //sin(x^2+3)
+    //sin(3x) = -0.2794
+
 }
