@@ -3,6 +3,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,9 +21,34 @@ public class MathJSAPIConnection {
         this.client = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
     }
+    public String formatFunction(String function) {
+        // Handle cases like 3x, -2x, x^2, etc.
+        Pattern pattern = Pattern.compile("([-]?\\d*)" + Pattern.quote(variableName) + "(\\^(\\d+))?");
+        Matcher matcher = pattern.matcher(function);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String coefficient = matcher.group(1);
+            String powerPart = matcher.group(3);
+
+            String replacement;
+            if (coefficient.isEmpty() || coefficient.equals("+") || coefficient.equals("-")) {
+                replacement = (coefficient.isEmpty() ? "1" : (coefficient.equals("-") ? "-1" : "1")) + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
+            } else {
+                replacement = coefficient + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
+            }
+            matcher.appendReplacement(sb, replacement);
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
 
     private String evaluateExpression(String expression) {
         try {
+            if (expression.contains("X")) {
+                throw new IllegalArgumentException("Error: Variable 'X' must be lowercase 'x'. Please re-enter the function.");
+            }
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL))
                     .header("Content-Type", "application/json")
@@ -48,19 +76,21 @@ public class MathJSAPIConnection {
     }
 
     public String evaluateFunctionAtValue(String function, double value) {
-        String expressionToEvaluate = function.replace(variableName, String.valueOf(value));
+        String formattedFunction = formatFunction(function);
+        String expressionToEvaluate = formattedFunction.replace(variableName, String.valueOf(value));
         return evaluateExpression(expressionToEvaluate);
     }
 
+    //for testing function evaluation
     public static void main(String[] args) {
         MathJSAPIConnection connection = new MathJSAPIConnection();
 
-        // Example 1: Evaluate a function at a value
-        String function1 = "sin(x^3 + 2) + e^x";
-        String variable1 = "x";
+
+        String function1 = "e^sin(x^2 + 3)";
         double value1 = 4.0;
         String result1 = connection.evaluateFunctionAtValue(function1, value1);
-        System.out.println("Result of " + function1 + " at " + variable1 + "=" + value1 + ": " + result1);
+        System.out.println(connection.formatFunction(function1));
+        System.out.println(result1);
 
     }
 }
