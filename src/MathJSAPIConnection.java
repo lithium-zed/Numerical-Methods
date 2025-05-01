@@ -82,15 +82,15 @@ public class MathJSAPIConnection {
     }
 
     //for testing function evaluation
-    public static void main(String[] args) {
-        MathJSAPIConnection connection = new MathJSAPIConnection();
-
-
-        String function1 = "e^sin(x^2 + 3)";
-        double value1 = 4.0;
-        String result1 = connection.evaluateFunctionAtValue(function1, value1);
-        System.out.println(connection.formatFunction(function1));
-        System.out.println(result1);
-
-    }
+//    public static void main(String[] args) {
+//        MathJSAPIConnection connection = new MathJSAPIConnection();
+//
+//
+//        String function1 = "e^sin(x^2 + 3)";
+//        double value1 = 4.0;
+//        String result1 = connection.evaluateFunctionAtValue(function1, value1);
+//        System.out.println(connection.formatFunction(function1));
+//        System.out.println(result1);
+//
+//    }
 }
