@@ -9,7 +9,7 @@ public class FunctionReader {
 
     public double functionResult(){
 
-        
+
 
         return Double.NaN;
     }
