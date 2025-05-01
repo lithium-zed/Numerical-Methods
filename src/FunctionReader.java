@@ -154,6 +154,7 @@ public class FunctionReader {
         return String.format("f(x) = %s : value of x = %f", this.function, this.x);
     }
 
+    //testing the function
     public static void main(String[] args) {
         FunctionReader reader1 = new FunctionReader("sin(x) + cos(x)", 1);
         System.out.println(reader1);
