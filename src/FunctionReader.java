@@ -1,2 +1,163 @@
-package PACKAGE_NAME;public class FunctionReader {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class FunctionReader {
+    private String function;
+    private double x;
+
+    public FunctionReader(String function, double x) {
+        if (function.contains("X")) {
+            throw new IllegalArgumentException("Error: Variable 'X' must be lowercase 'x'. Please re-enter the function.");
+        }
+        this.function = function;
+        this.x = x;
+    }
+
+    public double functionResult() {
+        String substitutedFunction = this.function.replaceAll("x", "(" + String.valueOf(this.x) + ")");
+
+        try {
+            // Handle Euler's number 'e'
+            substitutedFunction = substitutedFunction.replaceAll("e", String.valueOf(Math.E));
+
+            // Handle transcendental functions (sin, cos, tan)
+            substitutedFunction = substitutedFunction.replaceAll("sin\\((.*?)\\)", "Math.sin($1)");
+            substitutedFunction = substitutedFunction.replaceAll("cos\\((.*?)\\)", "Math.cos($1)");
+            substitutedFunction = substitutedFunction.replaceAll("tan\\((.*?)\\)", "Math.tan($1)");
+
+            // Handle exponentiation (^) by replacing with Math.pow
+            Pattern powerPattern = Pattern.compile("(\\d+(\\.\\d+)?|\\(.*?\\))\\^(\\d+(\\.\\d+)?|\\(.*?\\))");
+            Matcher powerMatcher = powerPattern.matcher(substitutedFunction);
+            StringBuffer sb = new StringBuffer();
+            while (powerMatcher.find()) {
+                String base = powerMatcher.group(1);
+                String exponent = powerMatcher.group(3);
+                String replacement = "Math.pow(" + base + ", " + exponent + ")";
+                powerMatcher.appendReplacement(sb, replacement);
+            }
+            powerMatcher.appendTail(sb);
+            substitutedFunction = sb.toString();
+
+            // Basic arithmetic evaluation (very limited)
+            return evaluateSimpleExpression(substitutedFunction);
+
+        } catch (Exception e) {
+            System.err.println("Error evaluating the function: " + e.getMessage());
+            return Double.NaN;
+        }
+    }
+
+    private double evaluateSimpleExpression(String expression) {
+        expression = expression.replaceAll("\\s+", "");
+
+        // Evaluate Math.pow()
+        Pattern powerPatternEval = Pattern.compile("Math\\.pow\\(([-?\\d+(\\.\\d+)?]*),([-?\\d+(\\.\\d+)?]*)\\)");
+        Matcher powerMatcherEval = powerPatternEval.matcher(expression);
+        StringBuffer sbEval = new StringBuffer();
+        while (powerMatcherEval.find()) {
+            double base = Double.parseDouble(powerMatcherEval.group(1).replaceAll("[()]", ""));
+            double exponent = Double.parseDouble(powerMatcherEval.group(2).replaceAll("[()]", ""));
+            powerMatcherEval.appendReplacement(sbEval, String.valueOf(Math.pow(base, exponent)));
+        }
+        powerMatcherEval.appendTail(sbEval);
+        expression = sbEval.toString();
+
+        // Evaluate sin, cos, tan
+        expression = evaluateTrigonometricFunctions(expression);
+
+        // Basic multiplication and division
+        while (expression.contains("*") || expression.contains("/")) {
+            Pattern opPattern = Pattern.compile("(-?\\(?\\d+(\\.\\d+)?\\)?)([\\*/])(-?\\(?\\d+(\\.\\d+)?\\)?)");
+            Matcher opMatcher = opPattern.matcher(expression);
+            if (opMatcher.find()) {
+                double operand1 = Double.parseDouble(opMatcher.group(1).replaceAll("[()]", ""));
+                String operator = opMatcher.group(3);
+                double operand2 = Double.parseDouble(opMatcher.group(4).replaceAll("[()]", ""));
+                double result = 0;
+                if (operator.equals("*")) {
+                    result = operand1 * operand2;
+                } else if (operator.equals("/")) {
+                    result = operand1 / operand2;
+                }
+                expression = expression.replaceFirst(Pattern.quote(opMatcher.group(0)), String.valueOf(result));
+            } else {
+                break;
+            }
+        }
+
+        // Basic addition and subtraction
+        while (expression.contains("+") || (expression.startsWith("-") && expression.substring(1).contains("-")) || expression.substring(1).contains("-")) {
+            Pattern opPattern = Pattern.compile("(-?\\(?\\d+(\\.\\d+)?\\)?)([+-])(-?\\(?\\d+(\\.\\d+)?\\)?)");
+            Matcher opMatcher = opPattern.matcher(expression);
+            if (opMatcher.find()) {
+                double operand1 = Double.parseDouble(opMatcher.group(1).replaceAll("[()]", ""));
+                String operator = opMatcher.group(3);
+                double operand2 = Double.parseDouble(opMatcher.group(4).replaceAll("[()]", ""));
+                double result = 0;
+                if (operator.equals("+")) {
+                    result = operand1 + operand2;
+                } else if (operator.equals("-")) {
+                    result = operand1 - operand2;
+                }
+                expression = expression.replaceFirst(Pattern.quote(opMatcher.group(0)), String.valueOf(result));
+            } else {
+                break;
+            }
+        }
+
+        try {
+            return Double.parseDouble(expression);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Could not evaluate the final expression: " + expression);
+        }
+    }
+
+    private String evaluateTrigonometricFunctions(String expression) {
+        // Evaluate sin
+        Pattern sinPattern = Pattern.compile("Math\\.sin\\(([-?\\d+(\\.\\d+)?]*)\\)");
+        Matcher sinMatcher = sinPattern.matcher(expression);
+        StringBuffer sbSin = new StringBuffer();
+        while (sinMatcher.find()) {
+            double argument = Double.parseDouble(sinMatcher.group(1).replaceAll("[()]", ""));
+            sinMatcher.appendReplacement(sbSin, String.valueOf(Math.sin(argument)));
+        }
+        sinMatcher.appendTail(sbSin);
+        expression = sbSin.toString();
+
+        // Evaluate cos
+        Pattern cosPattern = Pattern.compile("Math\\.cos\\(([-?\\d+(\\.\\d+)?]*)\\)");
+        Matcher cosMatcher = cosPattern.matcher(expression);
+        StringBuffer sbCos = new StringBuffer();
+        while (cosMatcher.find()) {
+            double argument = Double.parseDouble(cosMatcher.group(1).replaceAll("[()]", ""));
+            cosMatcher.appendReplacement(sbCos, String.valueOf(Math.cos(argument)));
+        }
+        cosMatcher.appendTail(sbCos);
+        expression = sbCos.toString();
+
+        // Evaluate tan
+        Pattern tanPattern = Pattern.compile("Math\\.tan\\(([-?\\d+(\\.\\d+)?]*)\\)");
+        Matcher tanMatcher = tanPattern.matcher(expression);
+        StringBuffer sbTan = new StringBuffer();
+        while (tanMatcher.find()) {
+            double argument = Double.parseDouble(tanMatcher.group(1).replaceAll("[()]", ""));
+            tanMatcher.appendReplacement(sbTan, String.valueOf(Math.tan(argument)));
+        }
+        tanMatcher.appendTail(sbTan);
+        expression = sbTan.toString();
+
+        return expression;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("f(x) = %s : value of x = %f", this.function, this.x);
+    }
+
+    public static void main(String[] args) {
+        FunctionReader reader1 = new FunctionReader("sin(x) + cos(x)", 1);
+        System.out.println(reader1);
+        System.out.println("Result: " + reader1.functionResult());
+
+    }
 }
