@@ -103,13 +103,7 @@ public class BisectionUI extends JFrame implements ActionListener {
             } else if (four_decimal.isSelected()) {
                 decimalPlaces = 4;
             }
-
-            System.out.println("Function from MenuUI: " + function);
-            System.out.println("x0: " + x0Value);
-            System.out.println("x1: " + x1Value);
-            System.out.println("Tolerance: " + tolerance);
-            System.out.println("Selected Decimal Places: " + decimalPlaces);
-
+            
             tableModel.computeBisection(function, x0Value, x1Value, tolerance, decimalPlaces);
         }
     }
