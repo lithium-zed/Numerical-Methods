@@ -21,7 +21,7 @@ public class MathJSAPIConnection {
         this.client = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
     }
-    public String formatFunction(String function) {
+    private String formatFunction(String function) {
         // Handle cases like 3x, -2x, x^2, etc.
         Pattern pattern = Pattern.compile("([-]?\\d*)" + Pattern.quote(variableName) + "(\\^(\\d+))?");
         Matcher matcher = pattern.matcher(function);
