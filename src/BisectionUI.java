@@ -4,6 +4,7 @@ import java.awt.*;
 public class BisectionUI extends JFrame {
     JRadioButton two_decimal, three_decimal, four_decimal;
     JTable tableContent;
+    JButton compute;
     BisectionTableModel tableModel;
     JLabel x0, x1, terminating_condition;
     JTextField x0_field, x1_field, terminating_condition_field;
@@ -26,17 +27,19 @@ public class BisectionUI extends JFrame {
         two_decimal = new JRadioButton("2 Decimal places");
         three_decimal = new JRadioButton("3 Decimal places");
         four_decimal = new JRadioButton("4 Decimal places");
-
+        compute = new JButton("Get estimated root");
         ButtonGroup toggleGroup = new ButtonGroup();
         toggleGroup.add(two_decimal);
         toggleGroup.add(three_decimal);
         toggleGroup.add(four_decimal);
 
+
         decimalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         decimalPanel.add(two_decimal);
         decimalPanel.add(three_decimal);
         decimalPanel.add(four_decimal);
-
+        decimalPanel.add(compute);
+        
         panel = new JPanel(new GridBagLayout());
         addToPanel(x0,0,0,1);
         addToPanel(x0_field,1,0,1);
