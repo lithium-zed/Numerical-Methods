@@ -8,7 +8,7 @@ public class BisectionUI extends JFrame implements ActionListener {
     JTable tableContent;
     JButton compute;
     BisectionTableModel tableModel;
-    JLabel x0, x1, terminating_condition, functionLabel;
+    JLabel x0, x1, terminating_condition, functionLabel, estimated_root;
     JTextField x0_field, x1_field, terminating_condition_field, functionField;
     JPanel inputPanel, decimalPanel, functionPanel;
     Container container;
@@ -29,6 +29,7 @@ public class BisectionUI extends JFrame implements ActionListener {
         x0 = new JLabel("x0=");
         x1 = new JLabel("x1=");
         terminating_condition = new JLabel("EA=");
+        estimated_root = new JLabel("Estimated root: ");
         x1_field = new JTextField(5);
         x0_field = new JTextField(5);
         terminating_condition_field = new JTextField(5);
@@ -60,6 +61,7 @@ public class BisectionUI extends JFrame implements ActionListener {
         functionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         functionPanel.add(functionLabel);
         functionPanel.add(functionField);
+        functionPanel.add(estimated_root);
 
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.add(functionPanel, BorderLayout.NORTH);
@@ -103,8 +105,9 @@ public class BisectionUI extends JFrame implements ActionListener {
             } else if (four_decimal.isSelected()) {
                 decimalPlaces = 4;
             }
-            
+
             tableModel.computeBisection(function, x0Value, x1Value, tolerance, decimalPlaces);
+            estimated_root.setText(String.format("Estimated root: %s", tableModel.estimated_root));
         }
     }
 

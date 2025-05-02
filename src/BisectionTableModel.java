@@ -3,14 +3,79 @@ import java.util.ArrayList;
 
 public class BisectionTableModel extends AbstractTableModel {
     ArrayList<BisectionContent> bisectionContents;
+    String estimated_root;
     String[] header = {"Iteration", "x0", "f(x0)", "x1", "f(x1)", "x2", "f(x2)", "EA"};
     public BisectionTableModel() {
+        this.estimated_root = "";
         this.bisectionContents = new ArrayList<>();
     }
 
     public void addToTable(BisectionContent bisectionContent){
         bisectionContents.add(bisectionContent);
         this.fireTableDataChanged();
+    }
+
+    public void computeBisection(String function, double x0, double x1, double tolerance, int decimalPlaces){
+        BisectionContent bsc = new BisectionContent();
+        MathJSAPIConnection functionofx0 = new MathJSAPIConnection();
+        MathJSAPIConnection functionofx1 = new MathJSAPIConnection();
+        MathJSAPIConnection functionofx2 = new MathJSAPIConnection();
+
+
+        double roundedX0 = roundToDecimalPlaces(x0, decimalPlaces);
+        double roundedX1 = roundToDecimalPlaces(x1, decimalPlaces);
+        double roundedTolerance = roundToDecimalPlaces(tolerance, decimalPlaces);
+
+        int iter = 0;
+        double oldX2 = 0;
+        double ea = 0;
+
+        do {
+            iter++;
+
+            double getFunctionOfx0 = roundToDecimalPlaces(Double.parseDouble(functionofx0.evaluateFunctionAtValue(function,roundedX0)),decimalPlaces);
+            double getFunctionOfx1 = roundToDecimalPlaces(Double.parseDouble(functionofx1.evaluateFunctionAtValue(function,roundedX1)),decimalPlaces);
+            double roundedx2 = roundToDecimalPlaces(((roundedX0 + roundedX1) / 2),decimalPlaces);
+            double getFunctionofx2 = roundToDecimalPlaces(Double.parseDouble(functionofx2.evaluateFunctionAtValue(function,roundedx2)),decimalPlaces);
+
+            if (iter > 1) {
+                ea = roundToDecimalPlaces(Math.abs(roundedx2 - oldX2),decimalPlaces);
+            }
+            bsc.setEa(ea);
+
+            addToTable(new BisectionContent(iter,roundedX0,getFunctionOfx0,roundedX1,getFunctionOfx1,roundedx2,getFunctionofx2, bsc.getEa()));
+
+            if(getFunctionofx2 > 0){
+                if(getFunctionOfx0 > 0){
+                    roundedX0 = roundedx2;
+                } else if (getFunctionOfx1 > 0) {
+                    roundedX1 = roundedx2;
+                }
+            } else if (getFunctionofx2 < 0) {
+                if(getFunctionOfx0 < 0){
+                    roundedX0 = roundedx2;
+                } else if (getFunctionOfx1 < 0) {
+                    roundedX1 = roundedx2;
+                }
+            }
+
+            oldX2 = roundedx2;
+            if(iter > 1 && ea <= roundedTolerance){
+                estimated_root = String.valueOf(roundedx2);
+                break;
+            }
+
+
+        }while(true);
+
+    }
+    private double roundToDecimalPlaces(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
     @Override
