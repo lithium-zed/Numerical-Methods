@@ -13,6 +13,9 @@ public class BisectionContent {
         this.ea = ea;
     }
 
+    public BisectionContent() {
+    }
+
     public int getIteration() {
         return iteration;
     }
