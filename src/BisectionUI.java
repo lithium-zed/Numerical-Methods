@@ -110,8 +110,7 @@ public class BisectionUI extends JFrame implements ActionListener {
             System.out.println("Tolerance: " + tolerance);
             System.out.println("Selected Decimal Places: " + decimalPlaces);
 
-            // Now use the 'function' instance variable in your computation
-            //tableModel.computeBisection(function, x0Value, x1Value, tolerance, decimalPlaces);
+            tableModel.computeBisection(function, x0Value, x1Value, tolerance, decimalPlaces);
         }
     }
 
