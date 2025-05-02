@@ -4,13 +4,15 @@ import java.awt.event.ActionListener;
 public class Main {
     public static void main(String[] args) {
         MenuGUI menuGUI = new MenuGUI();
+        MathJSAPIConnection functionReader = new MathJSAPIConnection();
 
         menuGUI.bisection.addActionListener(new ActionListener() {
             BisectionUI bisectionUI;
             @Override
             public void actionPerformed(ActionEvent e) {
-                this.bisectionUI = new BisectionUI();
+                this.bisectionUI = new BisectionUI(menuGUI.functionsFL.getText());
                 menuGUI.dispose();
+
             }
         });
     }
