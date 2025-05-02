@@ -4,6 +4,7 @@ import java.awt.*;
 public class BisectionUI extends JFrame {
     JRadioButton two_decimal, three_decimal, four_decimal;
     JTable tableContent;
+    BisectionTableModel tableModel;
     JLabel x0, x1, terminating_condition;
     JTextField x0_field, x1_field, terminating_condition_field;
     JPanel panel, decimalPanel;
@@ -45,7 +46,14 @@ public class BisectionUI extends JFrame {
         addToPanel(terminating_condition_field,1,2,1);
         container.add(panel, BorderLayout.NORTH);
         container.add(decimalPanel, BorderLayout.CENTER);
-        
+
+        tableModel = new BisectionTableModel();
+        tableContent = new JTable(tableModel);
+        JScrollPane tablePane = new JScrollPane(tableContent);
+        container.add(tablePane, BorderLayout.SOUTH);
+
+
+
 
         this.setVisible(true);
         this.setTitle("Bisection Method");
