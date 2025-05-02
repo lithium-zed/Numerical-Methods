@@ -10,6 +10,21 @@ public class BisectionUI extends JFrame {
     BorderLayout layout;
 
     public BisectionUI() throws HeadlessException {
-        
+        container = this.getContentPane();
+        layout = new BorderLayout();
+        container.setLayout(layout);
+
+
+
+
+
+
+
+        this.setVisible(true);
+        this.setTitle("Bisection Method");
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
     }
 }
