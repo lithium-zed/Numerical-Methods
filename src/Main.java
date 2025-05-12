@@ -15,5 +15,15 @@ public class Main {
 
             }
         });
+
+        menuGUI.secant.addActionListener(new ActionListener() {
+            SecantUI secantUI;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                this.secantUI = new SecantUI(menuGUI.functionsFL.getText());
+                menuGUI.dispose();
+
+            }
+        });
     }
 }
