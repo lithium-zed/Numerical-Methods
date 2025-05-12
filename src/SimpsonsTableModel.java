@@ -5,7 +5,7 @@ public class SimpsonsTableModel extends AbstractTableModel {
 
     //create objects
     ArrayList<SimpsonsContent> simpsonsContents;
-//    String estimated_root;
+    String iValue;
     String[] columns = {"x","f(x)"};
 
     //instantiate
@@ -30,8 +30,17 @@ public class SimpsonsTableModel extends AbstractTableModel {
     }
 
     //algorithms
-    public void computeSimpsons(String function, double a, double b, double tolerance, int decimalPlaces){
+    public void computeSimpsons(String function, double a, double b, double n, int decimalPlaces){
+        SimpsonsContent sc=new SimpsonsContent();
+        MathJSAPIConnection functionOfX=new MathJSAPIConnection();
 
+        double step=(b-a)/n;
+        double roundedStep=roundToDecimalPlaces(step,decimalPlaces);
+
+        //for loop for the simpsons rule method
+        for(double i=a;i<=b;i+=roundedStep){
+
+        }
     }
     private double roundToDecimalPlaces(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();

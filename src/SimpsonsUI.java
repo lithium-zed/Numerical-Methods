@@ -8,8 +8,8 @@ public class SimpsonsUI extends JFrame implements ActionListener {
     JTable tableContent;
     JButton compute;
     SimpsonsTableModel tableModel;
-    JLabel a, b, n, terminating_condition, functionLabel, iValue;
-    JTextField aField, bField, terminating_condition_field, functionField;
+    JLabel a, b, n, functionLabel, iValue;
+    JTextField aField, bField, nField, functionField;
     JPanel inputPanel, decimalPanel, functionPanel;
     Container container;
     BorderLayout layout;
@@ -28,11 +28,11 @@ public class SimpsonsUI extends JFrame implements ActionListener {
 
         a = new JLabel("a=");
         b = new JLabel("b=");
-        terminating_condition = new JLabel("n=");
+        n = new JLabel("n=");
         iValue = new JLabel("I: ");
         aField = new JTextField(5);
         bField = new JTextField(5);
-        terminating_condition_field = new JTextField(5);
+        nField = new JTextField(5);
         two_decimal = new JRadioButton("2 Decimal places");
         three_decimal = new JRadioButton("3 Decimal places");
         four_decimal = new JRadioButton("4 Decimal places");
@@ -55,8 +55,8 @@ public class SimpsonsUI extends JFrame implements ActionListener {
         addToPanel(aField, 1, 1, 1);
         addToPanel(b, 0, 2, 1);
         addToPanel(bField, 1, 2, 1);
-        addToPanel(terminating_condition, 0, 3, 1);
-        addToPanel(terminating_condition_field, 1, 3, 1);
+        addToPanel(n, 0, 3, 1);
+        addToPanel(nField, 1, 3, 1);
 
         functionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         functionPanel.add(functionLabel);
@@ -92,6 +92,21 @@ public class SimpsonsUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if(e.getSource()==compute){
+            double a=Double.parseDouble(aField.getText());
+            double b=Double.parseDouble(bField.getText());
+            double n=Double.parseDouble(nField.getText());
+            double step = (b-a)/n;
+            int decimalPlaces=0;
+            if(two_decimal.isSelected()){
+                decimalPlaces=2;
+            }else if (three_decimal.isSelected()){
+                decimalPlaces=3;
+            }else if(four_decimal.isSelected()){
+                decimalPlaces=4;
+            }
+            tableModel.computeSimpsons(function,a,b,n,decimalPlaces);
+            iValue.setText(String.format("Value of I: %s", tableModel.iValue));
+        }
     }
 }
