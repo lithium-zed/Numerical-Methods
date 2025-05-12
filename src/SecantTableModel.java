@@ -15,7 +15,7 @@ public class SecantTableModel extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    public void computeBisection(String function, double x0, double x1, double tolerance, int decimalPlaces){
+    public void computeSecant(String function, double x0, double x1, double tolerance, int decimalPlaces){
         BisectionContent SecantContent = new BisectionContent(); // reused from BisectionContent
         MathJSAPIConnection functionofx0 = new MathJSAPIConnection();
         MathJSAPIConnection functionofx1 = new MathJSAPIConnection();
@@ -29,14 +29,17 @@ public class SecantTableModel extends AbstractTableModel {
         int iter = 0;
         double oldX2 = 0;
         double ea = 0;
+        double tempx1 = 0;
 
         do {
             iter++;
 
-
             double getFunctionOfx0 = roundToDecimalPlaces(Double.parseDouble(functionofx0.evaluateFunctionAtValue(function,roundedX0)),decimalPlaces);
             double getFunctionOfx1 = roundToDecimalPlaces(Double.parseDouble(functionofx1.evaluateFunctionAtValue(function,roundedX1)),decimalPlaces);
-            double roundedx2 = roundToDecimalPlaces(((roundedX0 + roundedX1) / 2),decimalPlaces);
+            double roundedx2 = roundToDecimalPlaces(
+                    (roundedX1 - getFunctionOfx1 * ((roundedX1 - roundedX0) / (getFunctionOfx1 - getFunctionOfx0))),
+                    decimalPlaces
+            );
             double getFunctionofx2 = roundToDecimalPlaces(Double.parseDouble(functionofx2.evaluateFunctionAtValue(function,roundedx2)),decimalPlaces);
 
             if (iter > 1) {
@@ -45,26 +48,18 @@ public class SecantTableModel extends AbstractTableModel {
             SecantContent.setEa(ea);
 
             addToTable(new BisectionContent(iter,roundedX0,getFunctionOfx0,roundedX1,getFunctionOfx1,roundedx2,getFunctionofx2, SecantContent.getEa()));
-
-//            if(getFunctionofx2 > 0){
-//                if(getFunctionOfx0 > 0){
-//                    roundedX0 = roundedx2;
-//                } else if (getFunctionOfx1 > 0) {
-//                    roundedX1 = roundedx2;
-//                }
-//            } else if (getFunctionofx2 < 0) {
-//                if(getFunctionOfx0 < 0){
-//                    roundedX0 = roundedx2;
-//                } else if (getFunctionOfx1 < 0) {
-//                    roundedX1 = roundedx2;
-//                }
-//            }
-
             
+            tempx1 = roundedX1;
+            roundedX1 = roundedx2;
+            roundedX0 = tempx1;
 
-
-
+            //x1 = x2
+            //x0 = x1
             oldX2 = roundedx2;
+
+
+
+            System.out.println("x2: " + roundedx2 + " x1: " + roundedX1 + " x0: "+ roundedX0 + " ea: " + ea);
             if(iter > 1 && ea <= roundedTolerance){
                 estimated_root = String.valueOf(roundedx2);
                 break;
@@ -121,5 +116,10 @@ public class SecantTableModel extends AbstractTableModel {
     public String getColumnName(int column) {
         return header[column];
     }
+
+    public static void main(String[] args) {
+        SecantTableModel model = new SecantTableModel();
+    }
+    //testing
 }
 

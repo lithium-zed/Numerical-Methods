@@ -106,7 +106,7 @@ public class SecantUI extends JFrame implements ActionListener {
                 decimalPlaces = 4;
             }
 
-            tableModel.computeBisection(function, x0Value, x1Value, tolerance, decimalPlaces);
+            tableModel.computeSecant(function, x0Value, x1Value, tolerance, decimalPlaces);
             estimated_root.setText(String.format("Estimated root: %s", tableModel.estimated_root));
         }
     }

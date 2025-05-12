@@ -7,7 +7,7 @@ public class BisectionUI extends JFrame implements ActionListener {
     JRadioButton two_decimal, three_decimal, four_decimal;
     JTable tableContent;
     JButton compute;
-    SecantTableModel tableModel;
+    BisectionTableModel tableModel;
     JLabel x0, x1, terminating_condition, functionLabel, estimated_root;
     JTextField x0_field, x1_field, terminating_condition_field, functionField;
     JPanel inputPanel, decimalPanel, functionPanel;
@@ -69,7 +69,7 @@ public class BisectionUI extends JFrame implements ActionListener {
         container.add(northPanel, BorderLayout.NORTH);
         container.add(decimalPanel, BorderLayout.CENTER);
 
-        tableModel = new SecantTableModel();
+        tableModel = new BisectionTableModel();
         tableContent = new JTable(tableModel);
         JScrollPane tablePane = new JScrollPane(tableContent);
         container.add(tablePane, BorderLayout.SOUTH);
