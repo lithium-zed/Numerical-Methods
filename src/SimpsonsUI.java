@@ -29,7 +29,7 @@ public class SimpsonsUI extends JFrame implements ActionListener {
         a = new JLabel("a=");
         b = new JLabel("b=");
         n = new JLabel("n=");
-        iValue = new JLabel("I: ");
+        iValue = new JLabel("Value of I: ");
         aField = new JTextField(5);
         bField = new JTextField(5);
         nField = new JTextField(5);
@@ -96,7 +96,6 @@ public class SimpsonsUI extends JFrame implements ActionListener {
             double a=Double.parseDouble(aField.getText());
             double b=Double.parseDouble(bField.getText());
             double n=Double.parseDouble(nField.getText());
-            double step = (b-a)/n;
             int decimalPlaces=0;
             if(two_decimal.isSelected()){
                 decimalPlaces=2;

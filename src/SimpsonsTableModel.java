@@ -37,10 +37,46 @@ public class SimpsonsTableModel extends AbstractTableModel {
         double step=(b-a)/n;
         double roundedStep=roundToDecimalPlaces(step,decimalPlaces);
 
-        //for loop for the simpsons rule method
-        for(double i=a;i<=b;i+=roundedStep){
+        int iter=-1;
+        double iValueAddition=0;
 
+        //for loop for the simpsons rule method
+        double lastXValue=0;
+        for(double i=a;i<=b;i+=roundedStep){
+            iter++;
+            lastXValue=i;
+            double getFunctionOfX=roundToDecimalPlaces(Double.parseDouble(functionOfX.evaluateFunctionAtValue(function,i)),decimalPlaces);
+            System.out.println("x_"+iter+" = "+getFunctionOfX);
+
+            //addition of I value
+            if(iter==0||i==b){
+                iValueAddition+=getFunctionOfX;
+                System.out.println("x_"+iter+" * 1 = "+getFunctionOfX);
+            }else{
+                if(iter%2==1){
+                    iValueAddition+=getFunctionOfX*4;
+                    System.out.println("x_"+iter+" * 4 = "+getFunctionOfX*4);
+                }else{
+                    iValueAddition+=getFunctionOfX*2;
+                    System.out.println("x_"+iter+" * 2 = "+getFunctionOfX*2);
+                }
+            }
+            addToTable(new SimpsonsContent("x_"+iter,getFunctionOfX));
+            this.fireTableDataChanged();
         }
+        if(lastXValue<b){
+            iter++;
+            double getFunctionOfX=roundToDecimalPlaces(Double.parseDouble(functionOfX.evaluateFunctionAtValue(function,b)),decimalPlaces);
+            System.out.println("x_"+iter+" = "+getFunctionOfX);
+            iValueAddition+=getFunctionOfX;
+            System.out.println("x_"+iter+" * 1 = "+getFunctionOfX);
+            addToTable(new SimpsonsContent("x_"+iter,getFunctionOfX));
+            this.fireTableDataChanged();
+        }
+        double iValue= roundToDecimalPlaces((roundedStep/3)*iValueAddition,decimalPlaces);
+        this.iValue = String.valueOf(iValue);
+        sc.setiValue(iValue);
+        System.out.println(iValue);
     }
     private double roundToDecimalPlaces(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -69,6 +105,12 @@ public class SimpsonsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return null;
+        SimpsonsContent content = simpsonsContents.get(rowIndex);
+        switch (columnIndex) {
+            case 0: return content.getX();
+            case 1: return content.getxFunction();
+            default: return null;
+        }
     }
+
 }
