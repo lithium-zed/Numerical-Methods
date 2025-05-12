@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class BisectionUI extends JFrame implements ActionListener {
+public class SecantUI extends JFrame implements ActionListener {
     JRadioButton two_decimal, three_decimal, four_decimal;
     JTable tableContent;
     JButton compute;
@@ -15,7 +15,7 @@ public class BisectionUI extends JFrame implements ActionListener {
     BorderLayout layout;
     private final String function;
 
-    public BisectionUI(String functionFromMenu) throws HeadlessException {
+    public SecantUI(String functionFromMenu) throws HeadlessException {
         this.function = functionFromMenu;
         container = this.getContentPane();
         layout = new BorderLayout();
