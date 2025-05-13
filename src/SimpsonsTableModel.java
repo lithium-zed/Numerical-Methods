@@ -45,6 +45,7 @@ public class SimpsonsTableModel extends AbstractTableModel {
         for(double i=a;i<=b;i+=roundedStep){
             iter++;
             lastXValue=i;
+            System.out.println(i);
             double getFunctionOfX=roundToDecimalPlaces(Double.parseDouble(functionOfX.evaluateFunctionAtValue(function,i)),decimalPlaces);
             System.out.println("x_"+iter+" = "+getFunctionOfX);
 
@@ -111,6 +112,13 @@ public class SimpsonsTableModel extends AbstractTableModel {
             case 1: return content.getxFunction();
             default: return null;
         }
+    }
+
+    public static void main(String[] args) {
+        SimpsonsTableModel tableModel = new SimpsonsTableModel();
+        MathJSAPIConnection func = new MathJSAPIConnection();
+        System.out.println(func.evaluateFunctionAtValue("e^x",-1));
+        //tableModel.computeSimpsons("e^x", -1, 1, 2, 2);
     }
 
 }
