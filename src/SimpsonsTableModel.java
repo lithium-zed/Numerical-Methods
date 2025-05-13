@@ -43,6 +43,7 @@ public class SimpsonsTableModel extends AbstractTableModel {
         //for loop for the simpsons rule method
         double lastXValue=0;
         for(double i=a;i<=b;i+=roundedStep){
+            i=roundToDecimalPlaces(i,decimalPlaces);
             iter++;
             lastXValue=i;
             System.out.println(i);
