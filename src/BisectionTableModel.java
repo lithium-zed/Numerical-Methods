@@ -30,6 +30,7 @@ public class BisectionTableModel extends AbstractTableModel {
         double oldX2 = 0;
         double ea = 0;
 
+        //start of loop ------------------
         do {
             iter++;
 

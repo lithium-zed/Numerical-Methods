@@ -23,7 +23,8 @@ public class MathJSAPIConnection {
     }
     private String formatFunction(String function) {
         // Handle cases like 3x, -2x, x^2, etc.
-        Pattern pattern = Pattern.compile("([-]?\\d*)" + Pattern.quote(variableName) + "(\\^(\\d+))?");
+
+        Pattern pattern = Pattern.compile("([-+]?\\d*\\.?\\d*)(" + Pattern.quote(variableName) + ")(\\^([-+]?\\d*\\.?\\d+))?");
         Matcher matcher = pattern.matcher(function);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
@@ -32,7 +33,7 @@ public class MathJSAPIConnection {
 
             String replacement;
             if (coefficient.isEmpty() || coefficient.equals("+") || coefficient.equals("-")) {
-                replacement = (coefficient.isEmpty() ? "1" : (coefficient.equals("-") ? "-1" : "1")) + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
+                replacement = (coefficient.isEmpty() ? "" : (coefficient.equals("-") ? "-" : "1")) + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
             } else {
                 replacement = coefficient + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
             }
@@ -82,15 +83,15 @@ public class MathJSAPIConnection {
     }
 
     //for testing function evaluation
-//    public static void main(String[] args) {
-//        MathJSAPIConnection connection = new MathJSAPIConnection();
-//
-//
-//        String function1 = "e^sin(x^2 + 3)";
-//        double value1 = 4.0;
-//        String result1 = connection.evaluateFunctionAtValue(function1, value1);
-//        System.out.println(connection.formatFunction(function1));
-//        System.out.println(result1);
-//
-//    }
+    public static void main(String[] args) {
+        MathJSAPIConnection connection = new MathJSAPIConnection();
+
+
+        String function1 = "2^-x";
+        double value1 = -1;
+        String result1 = connection.evaluateFunctionAtValue(function1, value1);
+        System.out.println(connection.formatFunction(function1));
+        System.out.println(result1);
+
+    }
 }
