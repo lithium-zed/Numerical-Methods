@@ -1,9 +1,10 @@
 public class SimpsonsContent {
-    private double xFunction, iValue;
+    private double xFunction, xValue, iValue;
     private String x;
 
-    public SimpsonsContent(String x, double xFunction){
+    public SimpsonsContent(String x,double xValue, double xFunction){
         this.x=x;
+        this.xValue=xValue;
         this.xFunction=xFunction;
     }
 
@@ -33,5 +34,13 @@ public class SimpsonsContent {
 
     public void setiValue(double iValue) {
         this.iValue = iValue;
+    }
+
+    public double getxValue() {
+        return xValue;
+    }
+
+    public void setxValue(double xValue) {
+        this.xValue = xValue;
     }
 }

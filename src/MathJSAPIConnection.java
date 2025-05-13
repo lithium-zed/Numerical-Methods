@@ -22,38 +22,26 @@ public class MathJSAPIConnection {
         this.objectMapper = new ObjectMapper();
     }
     private String formatFunction(String function) {
-        // Skip formatting for standard math functions to avoid breaking valid syntax
-        if (function.matches(".*\\b(sin|cos|tan|exp|log|ln|e)\\b.*")) {
-            return function;
-        }
+        // Handle cases like 3x, -2x, x^2, etc.
 
-        Pattern pattern = Pattern.compile("([-+]?\\d*)(" + Pattern.quote(variableName) + ")(\\^(\\d+))?");
+        Pattern pattern = Pattern.compile("([-+]?\\d*\\.?\\d*)(" + Pattern.quote(variableName) + ")(\\^([-+]?\\d*\\.?\\d+))?");
         Matcher matcher = pattern.matcher(function);
         StringBuffer sb = new StringBuffer();
-
         while (matcher.find()) {
             String coefficient = matcher.group(1);
-            String powerPart = matcher.group(4);
+            String powerPart = matcher.group(3);
 
             String replacement;
-            if (coefficient == null || coefficient.isEmpty()) {
-                coefficient = "1";
-            } else if (coefficient.equals("-")) {
-                coefficient = "-1";
+            if (coefficient.isEmpty() || coefficient.equals("+") || coefficient.equals("-")) {
+                replacement = (coefficient.isEmpty() ? "" : (coefficient.equals("-") ? "-" : "1")) + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
+            } else {
+                replacement = coefficient + "(" + variableName + ")" + (powerPart != null ? "^" + powerPart : "");
             }
-
-            replacement = coefficient + "*(" + variableName + ")";
-            if (powerPart != null) {
-                replacement += "^" + powerPart;
-            }
-
             matcher.appendReplacement(sb, replacement);
         }
-
         matcher.appendTail(sb);
         return sb.toString();
     }
-
 
 
     private String evaluateExpression(String expression) {
@@ -99,7 +87,7 @@ public class MathJSAPIConnection {
         MathJSAPIConnection connection = new MathJSAPIConnection();
 
 
-        String function1 = "e^x";
+        String function1 = "2^-x";
         double value1 = -1;
         String result1 = connection.evaluateFunctionAtValue(function1, value1);
         System.out.println(connection.formatFunction(function1));

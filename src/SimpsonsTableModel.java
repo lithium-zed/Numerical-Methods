@@ -6,7 +6,7 @@ public class SimpsonsTableModel extends AbstractTableModel {
     //create objects
     ArrayList<SimpsonsContent> simpsonsContents;
     String iValue;
-    String[] columns = {"x","f(x)"};
+    String[] columns = {"","x","f(x)"};
 
     //instantiate
     public SimpsonsTableModel(){
@@ -62,7 +62,7 @@ public class SimpsonsTableModel extends AbstractTableModel {
                     System.out.println("x_"+iter+" * 2 = "+getFunctionOfX*2);
                 }
             }
-            addToTable(new SimpsonsContent("x_"+iter,getFunctionOfX));
+            addToTable(new SimpsonsContent("x_"+iter,lastXValue,getFunctionOfX));
             this.fireTableDataChanged();
         }
         if(lastXValue<b){
@@ -71,7 +71,7 @@ public class SimpsonsTableModel extends AbstractTableModel {
             System.out.println("x_"+iter+" = "+getFunctionOfX);
             iValueAddition+=getFunctionOfX;
             System.out.println("x_"+iter+" * 1 = "+getFunctionOfX);
-            addToTable(new SimpsonsContent("x_"+iter,getFunctionOfX));
+            addToTable(new SimpsonsContent("x_"+iter,lastXValue,getFunctionOfX));
             this.fireTableDataChanged();
         }
         double iValue= roundToDecimalPlaces((roundedStep/3)*iValueAddition,decimalPlaces);
@@ -107,10 +107,12 @@ public class SimpsonsTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         SimpsonsContent content = simpsonsContents.get(rowIndex);
-        switch (columnIndex) {
-            case 0: return content.getX();
-            case 1: return content.getxFunction();
-            default: return null;
+        if(columnIndex==0){
+            return content.getX();
+        }else if(columnIndex==1){
+            return content.getxValue();
+        }else {
+            return content.getxFunction();
         }
     }
 
