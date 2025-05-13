@@ -21,6 +21,14 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 this.simpsonsUI = new SimpsonsUI(menuGUI.functionsFL.getText());
                 menuGUI.dispose();
+            }
+        });
+        menuGUI.secant.addActionListener(new ActionListener() {
+            SecantUI secantUI;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                this.secantUI = new SecantUI(menuGUI.functionsFL.getText());
+                menuGUI.dispose();
 
             }
         });
