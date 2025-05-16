@@ -44,7 +44,7 @@ public class MathJSAPIConnection {
     }
 
 
-    private String evaluateExpression(String expression) {
+    public String evaluateExpression(String expression) {
         try {
             if (expression.contains("X")) {
                 throw new IllegalArgumentException("Error: Variable 'X' must be lowercase 'x'. Please re-enter the function.");

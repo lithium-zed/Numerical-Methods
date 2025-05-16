@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GaussSeidel_UI extends JFrame implements ActionListener {
-    JLabel eq1, eq2, eq3, terminating_condition, x1,x2,x3;
+    JLabel eq1, eq2, eq3, terminating_condition, xLabel, yLabel, zLabel, xResultLabel, yResultLabel, zResultLabel;
     JTextField eq1Fl, eq2FL, eq3FL, terminating_condition_field;
     JRadioButton two_decimal, three_decimal, four_decimal;
     JButton compute;
@@ -23,9 +23,12 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
         eq1 = new JLabel("Equation1:");
         eq2 = new JLabel("Equation2:");
         eq3 = new JLabel("Equation3:");
-        x1 = new JLabel("x = ");
-        x2 = new JLabel("y = ");
-        x3 = new JLabel("z = ");
+        xLabel = new JLabel("x = ");
+        yLabel = new JLabel("y = ");
+        zLabel = new JLabel("z = ");
+        xResultLabel = new JLabel("");
+        yResultLabel = new JLabel("");
+        zResultLabel = new JLabel("");
 
 
         eq1Fl = new JTextField(10);
@@ -63,9 +66,12 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
         addToPanel(terminating_condition_field,1,4,1);
 
         functionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        functionPanel.add(x1);
-        functionPanel.add(x2);
-        functionPanel.add(x3);
+        functionPanel.add(xLabel);
+        functionPanel.add(xResultLabel);
+        functionPanel.add(yLabel);
+        functionPanel.add(yResultLabel);
+        functionPanel.add(zLabel);
+        functionPanel.add(zResultLabel);
 
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.add(functionPanel, BorderLayout.NORTH);
@@ -111,7 +117,7 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
                 decimalPlaces = 4;
             }
 
-            tableModel.computeGaussSeidel(eq1,eq2,eq3,tolerance,decimalPlaces);
+            tableModel.computeGaussSeidel(eq1,eq2,eq3,tolerance,decimalPlaces, xResultLabel, yResultLabel, zResultLabel);
         }
     }
 }
