@@ -32,5 +32,13 @@ public class Main {
 
             }
         });
+        menuGUI.gauss_seidel.addActionListener(new ActionListener() {
+            GaussSeidel_UI gaussSeidelUi;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                this.gaussSeidelUi = new GaussSeidel_UI();
+                menuGUI.dispose();
+            }
+        });
     }
 }
