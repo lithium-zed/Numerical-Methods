@@ -9,7 +9,8 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
     JRadioButton two_decimal, three_decimal, four_decimal;
     JButton compute;
     JPanel inputPanel, decimalPanel, functionPanel;
-
+    GaussSeidelTableModel tableModel;
+    JTable tableContent;
     Container container;
     BorderLayout layout;
 
@@ -72,9 +73,12 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
         container.add(northPanel, BorderLayout.NORTH);
         container.add(decimalPanel, BorderLayout.CENTER);
 
+        tableModel = new GaussSeidelTableModel();
+        tableContent = new JTable(tableModel);
+        JScrollPane tablePane = new JScrollPane(tableContent);
+        container.add(tablePane, BorderLayout.SOUTH);
 
-
-
+        
         this.setVisible(true);
         this.setTitle("Gauss-Seidel Method");
         this.pack();
