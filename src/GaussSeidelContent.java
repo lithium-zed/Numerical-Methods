@@ -1,18 +1,18 @@
 public class GaussSeidelContent {
     private int iteration;
-    private double x1,x2,x3,px1,px2,px3,eax1,eax2,eax3;
+    private double x,y,z,pX,pY,pZ,eaX,eaY,eaZ;
 
-    public GaussSeidelContent(int iteration, double x1, double x2, double x3, double px1, double px2, double px3, double eax1, double eax2, double eax3) {
+    public GaussSeidelContent(int iteration, double x, double y, double z, double pX, double pY, double pZ, double eaX, double eaY, double eaZ) {
         this.iteration = iteration;
-        this.x1 = x1;
-        this.x2 = x2;
-        this.x3 = x3;
-        this.px1 = px1;
-        this.px2 = px2;
-        this.px3 = px3;
-        this.eax1 = eax1;
-        this.eax2 = eax2;
-        this.eax3 = eax3;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.pX = pX;
+        this.pY = pY;
+        this.pZ = pZ;
+        this.eaX = eaX;
+        this.eaY = eaY;
+        this.eaZ = eaZ;
     }
 
     public GaussSeidelContent() {
@@ -26,75 +26,75 @@ public class GaussSeidelContent {
         this.iteration = iteration;
     }
 
-    public double getX1() {
-        return x1;
+    public double getX() {
+        return x;
     }
 
-    public void setX1(double x1) {
-        this.x1 = x1;
+    public void setX(double x) {
+        this.x = x;
     }
 
-    public double getX2() {
-        return x2;
+    public double getY() {
+        return y;
     }
 
-    public void setX2(double x2) {
-        this.x2 = x2;
+    public void setY(double y) {
+        this.y = y;
     }
 
-    public double getX3() {
-        return x3;
+    public double getZ() {
+        return z;
     }
 
-    public void setX3(double x3) {
-        this.x3 = x3;
+    public void setZ(double z) {
+        this.z = z;
     }
 
-    public double getPx1() {
-        return px1;
+    public double getpX() {
+        return pX;
     }
 
-    public void setPx1(double px1) {
-        this.px1 = px1;
+    public void setpX(double pX) {
+        this.pX = pX;
     }
 
-    public double getPx2() {
-        return px2;
+    public double getpY() {
+        return pY;
     }
 
-    public void setPx2(double px2) {
-        this.px2 = px2;
+    public void setpY(double pY) {
+        this.pY = pY;
     }
 
-    public double getPx3() {
-        return px3;
+    public double getpZ() {
+        return pZ;
     }
 
-    public void setPx3(double px3) {
-        this.px3 = px3;
+    public void setpZ(double pZ) {
+        this.pZ = pZ;
     }
 
-    public double getEax1() {
-        return eax1;
+    public double getEaX() {
+        return eaX;
     }
 
-    public void setEax1(double eax1) {
-        this.eax1 = eax1;
+    public void setEaX(double eaX) {
+        this.eaX = eaX;
     }
 
-    public double getEax2() {
-        return eax2;
+    public double getEaY() {
+        return eaY;
     }
 
-    public void setEax2(double eax2) {
-        this.eax2 = eax2;
+    public void setEaY(double eaY) {
+        this.eaY = eaY;
     }
 
-    public double getEax3() {
-        return eax3;
+    public double getEaZ() {
+        return eaZ;
     }
 
-    public void setEax3(double eax3) {
-        this.eax3 = eax3;
+    public void setEaZ(double eaZ) {
+        this.eaZ = eaZ;
     }
 }

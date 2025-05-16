@@ -23,9 +23,9 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
         eq1 = new JLabel("Equation1:");
         eq2 = new JLabel("Equation2:");
         eq3 = new JLabel("Equation3:");
-        x1 = new JLabel("x1 = ");
-        x2 = new JLabel("x2 = ");
-        x3 = new JLabel("x3 = ");
+        x1 = new JLabel("x = ");
+        x2 = new JLabel("y = ");
+        x3 = new JLabel("z = ");
 
 
         eq1Fl = new JTextField(10);
@@ -96,6 +96,22 @@ public class GaussSeidel_UI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == compute){
+            String eq1 = this.eq1Fl.getText();
+            String eq2 = this.eq2FL.getText();
+            String eq3 = this.eq3FL.getText();
+            double tolerance = Double.parseDouble(terminating_condition_field.getText());
+            int decimalPlaces = 0;
 
+            if (two_decimal.isSelected()) {
+                decimalPlaces = 2;
+            } else if (three_decimal.isSelected()) {
+                decimalPlaces = 3;
+            } else if (four_decimal.isSelected()) {
+                decimalPlaces = 4;
+            }
+
+            tableModel.computeGaussSeidel(eq1,eq2,eq3,tolerance,decimalPlaces);
+        }
     }
 }
