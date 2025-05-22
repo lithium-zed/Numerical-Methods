@@ -1,65 +1,58 @@
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.util.regex.*;
 
-public class DooLittleUI extends JFrame{
-    private JPanel matrixPanel, bVectorPanel;
+public class DooLittleUI extends JFrame {
     private JTextField sizeField;
-    private JButton generateButton, computeButton;
-    private JTextField[][] matrixFields;
+    private JPanel matrixPanel, bVectorPanel;
+    private JTextField[] functionFields;
     private JTextField[] bVectorFields;
     private JTextArea resultArea;
+    private JComboBox<String> precisionSelector;
+    private int decimalPlaces = 2;
 
-    public DooLittleUI(){
-        setTitle("Doolittle LU Decomposition");
+    public DooLittleUI() {
+        setTitle("Doolittle LU Decomposition Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(700, 700);
-        setLayout(new BorderLayout(10, 10));
-        setLocationRelativeTo(null); // Center window
+        setSize(700, 600);
+        setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        topPanel.setBorder(new TitledBorder("Matrix Size"));
-
-        topPanel.add(new JLabel("Enter size (n x n):"));
-        sizeField = new JTextField(3);
+        // Top Panel: Matrix size
+        JPanel topPanel = new JPanel(new FlowLayout());
+        topPanel.add(new JLabel("Matrix Size (n x n):"));
+        sizeField = new JTextField(5);
         topPanel.add(sizeField);
-
-        generateButton = new JButton("Generate Matrix");
+        JButton generateButton = new JButton("Generate Fields");
+        generateButton.addActionListener(e -> generateMatrix());
         topPanel.add(generateButton);
+
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-
+        // Center Panel: Matrix & b-vector
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2));
         matrixPanel = new JPanel();
-        matrixPanel.setBorder(new TitledBorder("Enter Matrix Elements"));
-        centerPanel.add(matrixPanel, BorderLayout.CENTER);
-
-
+        JScrollPane matrixScroll = new JScrollPane(matrixPanel);
+        centerPanel.add(matrixScroll);
 
         bVectorPanel = new JPanel();
-        bVectorPanel.setBorder(new TitledBorder("Enter Vector b (Ax = b)"));
-        centerPanel.add(bVectorPanel, BorderLayout.EAST);
+        JScrollPane bScroll = new JScrollPane(bVectorPanel);
+        centerPanel.add(bScroll);
 
         add(centerPanel, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
-
-        computeButton = new JButton("Compute LU");
-        computeButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        // Bottom Panel: Compute + Results
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JButton computeButton = new JButton("Compute");
+        computeButton.addActionListener(e -> computeLU());
         bottomPanel.add(computeButton, BorderLayout.NORTH);
 
-        resultArea = new JTextArea(15, 40);
-        resultArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        resultArea = new JTextArea(15, 50);
+        resultArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         resultArea.setEditable(false);
-        resultArea.setBorder(BorderFactory.createTitledBorder("Results"));
-        bottomPanel.add(new JScrollPane(resultArea), BorderLayout.CENTER);
+        JScrollPane resultScroll = new JScrollPane(resultArea);
+        bottomPanel.add(resultScroll, BorderLayout.CENTER);
 
         add(bottomPanel, BorderLayout.SOUTH);
-
-        generateButton.addActionListener(e -> generateMatrix());
-        computeButton.addActionListener(e -> computeLU());
-
         setVisible(true);
     }
 
@@ -74,25 +67,32 @@ public class DooLittleUI extends JFrame{
         }
 
         matrixPanel.removeAll();
-        matrixPanel.setLayout(new GridLayout(n, n, 5, 5));
-        matrixFields = new JTextField[n][n];
+        matrixPanel.setLayout(new GridLayout(n, 1, 5, 5));
+        functionFields = new JTextField[n];
 
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                matrixFields[i][j] = new JTextField(5);
-                matrixFields[i][j].setHorizontalAlignment(JTextField.CENTER);
-                matrixPanel.add(matrixFields[i][j]);
-            }
+            functionFields[i] = new JTextField(30);
+            functionFields[i].setToolTipText("e.g., 2*x1 + 3*x2 - 4*x3");
+            matrixPanel.add(functionFields[i]);
         }
 
         bVectorPanel.removeAll();
-        bVectorPanel.setLayout(new GridLayout(n, 1, 5, 5));
+        bVectorPanel.setLayout(new GridLayout(n + 1, 1, 5, 5));
         bVectorFields = new JTextField[n];
         for (int i = 0; i < n; i++) {
+            bVectorPanel.add(new JLabel("b" + (i + 1)));
             bVectorFields[i] = new JTextField(5);
             bVectorFields[i].setHorizontalAlignment(JTextField.CENTER);
             bVectorPanel.add(bVectorFields[i]);
         }
+
+        // Add precision selector
+        String[] precisions = { "0", "1", "2", "3", "4" };
+        precisionSelector = new JComboBox<>(precisions);
+        precisionSelector.setSelectedIndex(2);
+        precisionSelector.addActionListener(e -> decimalPlaces = Integer.parseInt((String) precisionSelector.getSelectedItem()));
+        bVectorPanel.add(new JLabel("Decimal Places:"));
+        bVectorPanel.add(precisionSelector);
 
         matrixPanel.revalidate();
         matrixPanel.repaint();
@@ -101,21 +101,27 @@ public class DooLittleUI extends JFrame{
     }
 
     private void computeLU() {
-        if (matrixFields == null || bVectorFields == null) {
-            JOptionPane.showMessageDialog(this, "Please generate the matrix first.", "Missing Matrix", JOptionPane.WARNING_MESSAGE);
+        if (functionFields == null || bVectorFields == null) {
+            JOptionPane.showMessageDialog(this, "Please generate the matrix and vector first.", "Missing Input", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int n = matrixFields.length;
+        int n = functionFields.length;
         double[][] A = new double[n][n];
         double[] b = new double[n];
 
         try {
-            // Read matrix values
+            // Parse b values
             for (int i = 0; i < n; i++) {
                 b[i] = Double.parseDouble(bVectorFields[i].getText());
+            }
+
+            // Parse function strings
+            for (int i = 0; i < n; i++) {
+                String func = functionFields[i].getText().replaceAll("\\s+", "");
                 for (int j = 0; j < n; j++) {
-                    A[i][j] = Double.parseDouble(matrixFields[i][j].getText());
+                    String variable = "x" + (j + 1);
+                    A[i][j] = extractCoefficient(func, variable);
                 }
             }
 
@@ -141,6 +147,7 @@ public class DooLittleUI extends JFrame{
                 }
             }
 
+            // Forward substitution
             double[] y = new double[n];
             for (int i = 0; i < n; i++) {
                 double sum = 0.0;
@@ -150,6 +157,7 @@ public class DooLittleUI extends JFrame{
                 y[i] = b[i] - sum;
             }
 
+            // Backward substitution
             double[] x = new double[n];
             for (int i = n - 1; i >= 0; i--) {
                 double sum = 0.0;
@@ -159,26 +167,40 @@ public class DooLittleUI extends JFrame{
                 x[i] = (y[i] - sum) / U[i][i];
             }
 
-            // Display result
+            // Format output
+            String format = "%8." + decimalPlaces + "f";
             StringBuilder result = new StringBuilder();
-            result.append("L Matrix:\n").append(formatMatrix(L)).append("\n");
-            result.append("U Matrix:\n").append(formatMatrix(U)).append("\n");
-
+            result.append("Original Matrix A:\n").append(formatMatrix(A, format)).append("\n");
+            result.append("L Matrix:\n").append(formatMatrix(L, format)).append("\n");
+            result.append("U Matrix:\n").append(formatMatrix(U, format)).append("\n");
             result.append("Solution Vector x:\n");
             for (int i = 0; i < n; i++) {
-                result.append(String.format("x%d = %.2f\n", i + 1, x[i]));
+                result.append("x").append(i + 1).append(" = ").append(String.format("%." + decimalPlaces + "f", x[i])).append("\n");
             }
 
             resultArea.setText(result.toString());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Please enter valid numeric values in all fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error in input or parsing. Check syntax and values.", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private String formatMatrix(double[][] matrix) {
+
+    private double extractCoefficient(String equation, String variable) {
+        String regex = "([+-]?\\d*\\.?\\d*)\\*?" + variable;
+        Matcher matcher = Pattern.compile(regex).matcher(equation);
+        if (matcher.find()) {
+            String coeff = matcher.group(1);
+            if (coeff.isEmpty() || coeff.equals("+")) return 1.0;
+            if (coeff.equals("-")) return -1.0;
+            return Double.parseDouble(coeff);
+        }
+        return 0.0;
+    }
+
+    private String formatMatrix(double[][] M, String format) {
         StringBuilder sb = new StringBuilder();
-        for (double[] row : matrix) {
+        for (double[] row : M) {
             for (double val : row) {
-                sb.append(String.format("%8.2f", val)).append(" ");
+                sb.append(String.format(format, val)).append(" ");
             }
             sb.append("\n");
         }
@@ -188,5 +210,5 @@ public class DooLittleUI extends JFrame{
     public static void main(String[] args) {
         SwingUtilities.invokeLater(DooLittleUI::new);
     }
-
 }
+
