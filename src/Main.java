@@ -15,7 +15,14 @@ public class Main {
 
             }
         });
-
+        menuGUI.simpson1_3.addActionListener(new ActionListener() {
+            SimpsonsUI simpsonsUI;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                this.simpsonsUI = new SimpsonsUI(menuGUI.functionsFL.getText());
+                menuGUI.dispose();
+            }
+        });
         menuGUI.secant.addActionListener(new ActionListener() {
             SecantUI secantUI;
             @Override
@@ -23,6 +30,14 @@ public class Main {
                 this.secantUI = new SecantUI(menuGUI.functionsFL.getText());
                 menuGUI.dispose();
 
+            }
+        });
+        menuGUI.gauss_seidel.addActionListener(new ActionListener() {
+            GaussSeidel_UI gaussSeidelUi;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                this.gaussSeidelUi = new GaussSeidel_UI();
+                menuGUI.dispose();
             }
         });
     }

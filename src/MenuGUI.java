@@ -20,7 +20,7 @@ public class MenuGUI extends JFrame {
         secant = new JButton("Secant Method");
         doolittle = new JButton("Doolittle Method");
         gauss_seidel = new JButton("Gauss-Seidel Method");
-        simpson1_3 = new JButton("Simpon 1/3 Rule Method");
+        simpson1_3 = new JButton("Simpson's 1/3 Rule Method");
 
         JPanel panel1 = new JPanel(new FlowLayout());
         panel1.add(function);
