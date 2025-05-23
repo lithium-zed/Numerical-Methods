@@ -40,5 +40,15 @@ public class Main {
                 menuGUI.dispose();
             }
         });
+
+        menuGUI.doolittle.addActionListener(new ActionListener() {
+            DooLittleUI dooLittleUI;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                this.dooLittleUI = new DooLittleUI();
+                menuGUI.dispose();
+            }
+        });
+
     }
 }
